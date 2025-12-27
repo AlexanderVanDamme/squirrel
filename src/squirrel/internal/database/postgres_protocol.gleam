@@ -27,13 +27,25 @@ pub type Connection {
 pub fn connect(host, port, timeout) {
   let options =
     mug.ConnectionOptions(
-      host:,
-      port:,
-      timeout:,
-      ip_version_preference: mug.Ipv4Preferred,
+      host: host,
+      port: port,
+      timeout: timeout,
+      tls_opts: mug.NoTls,
     )
+
   use socket <- result.try(mug.connect(options))
-  Ok(Connection(socket:, buffer: <<>>, timeout:))
+  let tls_ver_method = mug.DangerouslyDisableVerification
+  use socket2 <- result.try(maybe_ssl(socket, tls_ver_method))
+  Ok(Connection(socket: socket2, buffer: <<>>, timeout: timeout))
+}
+
+fn maybe_ssl(socket, tls_ver_method) {
+  use _ <- result.try(mug.send(socket, <<8:size(32), 80_877_103:size(32)>>))
+  case mug.receive(socket, 500) {
+    Ok(<<"S">>) -> mug.upgrade(socket, tls_ver_method, 1000)
+    Ok(_) -> Ok(socket)
+    Error(reason) -> Error(reason)
+  }
 }
 
 pub type StateInitial {
