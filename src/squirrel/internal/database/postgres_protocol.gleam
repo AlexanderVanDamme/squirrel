@@ -30,21 +30,25 @@ pub fn connect(host, port, timeout) {
       host: host,
       port: port,
       timeout: timeout,
+      ip_version_preference: mug.Ipv4Preferred,
       tls_opts: mug.NoTls,
     )
 
   use socket <- result.try(mug.connect(options))
-  let tls_ver_method = mug.DangerouslyDisableVerification
-  use socket2 <- result.try(maybe_ssl(socket, tls_ver_method))
+  let socket2 = maybe_ssl(socket)
   Ok(Connection(socket: socket2, buffer: <<>>, timeout: timeout))
 }
 
-fn maybe_ssl(socket, tls_ver_method) {
-  use _ <- result.try(mug.send(socket, <<8:size(32), 80_877_103:size(32)>>))
+fn maybe_ssl(socket) {
+  let assert Ok(_) = mug.send(socket, <<8:size(32), 80_877_103:size(32)>>)
   case mug.receive(socket, 500) {
-    Ok(<<"S">>) -> mug.upgrade(socket, tls_ver_method, 1000)
-    Ok(_) -> Ok(socket)
-    Error(reason) -> Error(reason)
+    Ok(<<"S">>) -> {
+      let assert Ok(upgraded) =
+        mug.upgrade(socket, mug.DangerouslyDisableVerification, 1000)
+      upgraded
+    }
+    Ok(_) -> socket
+    Error(_) -> socket
   }
 }
 
