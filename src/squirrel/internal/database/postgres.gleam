@@ -305,6 +305,16 @@ pub fn connect_and_authenticate(
     database:,
   ) = connection
 
+  // Extract endpoint ID from Neon-style hostnames (ep-xxx-yyy.region.aws.neon.tech)
+  // Neon requires this for SNI routing when the client doesn't send SNI during SSL
+  let endpoint_id = case string.split(host, ".") {
+    [first, ..] -> case string.starts_with(first, "ep-") {
+      True -> first
+      False -> ""
+    }
+    _ -> ""
+  }
+
   use db <- result.try(
     pg.connect(host, port, timeout_seconds * 1000)
     |> result.map_error(error.PgCannotEstablishTcpConnection(
@@ -326,7 +336,7 @@ pub fn connect_and_authenticate(
   //
 
   let setup_script = {
-    use _ <- eval.try(authenticate(user:, database:, password:))
+    use _ <- eval.try(authenticate(user:, database:, password:, endpoint_id:))
     use _ <- eval.try(ensure_postgres_version())
     eval.return(Nil)
   }
@@ -359,8 +369,13 @@ fn authenticate(
   user user: String,
   database database: String,
   password password: String,
+  endpoint_id endpoint_id: String,
 ) -> Db(Nil) {
-  let params = [#("user", user), #("database", database)]
+  // Include endpoint ID in params for Neon SNI routing support
+  let params = case endpoint_id {
+    "" -> [#("user", user), #("database", database)]
+    _ -> [#("user", user), #("database", database), #("options", "endpoint=" <> endpoint_id)]
+  }
   use _ <- eval.try(send(pg.FeStartupMessage(params)))
 
   use msg <- eval.try(receive())

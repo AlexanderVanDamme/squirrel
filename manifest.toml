@@ -25,7 +25,7 @@ packages = [
   { name = "glexer", version = "2.2.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "glexer", source = "hex", outer_checksum = "5C235CBDF4DA5203AD5EAB1D6D8B456ED8162C5424FE2309CFFB7EF438B7C269" },
   { name = "global_value", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "global_value", source = "hex", outer_checksum = "23F74C91A7B819C43ABCCBF49DAD5BB8799D81F2A3736BA9A534BD47F309FF4F" },
   { name = "justin", version = "1.0.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "justin", source = "hex", outer_checksum = "7FA0C6DB78640C6DC5FBFD59BF3456009F3F8B485BF6825E97E1EB44E9A1E2CD" },
-  { name = "mug", version = "3.0.0", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_stdlib"], otp_app = "mug", source = "hex", outer_checksum = "49AD2B71690C6A615453D272300951C4BDE19FBF55B167D9C951F5CD89FEC820" },
+  { name = "mug", version = "3.1.0", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_stdlib"], source = "git", repo = "https://github.com/arnu515/mug.git", commit = "a2767a2992dbf61c9450739ba98031e74072ea5c" },
   { name = "non_empty_list", version = "2.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "non_empty_list", source = "hex", outer_checksum = "3BF1496B475F3F2CE2EA18157587329812493369B2A7C5B9DCFEA5C007670A3B" },
   { name = "opentelemetry_api", version = "1.4.1", build_tools = ["rebar3", "mix"], requirements = [], otp_app = "opentelemetry_api", source = "hex", outer_checksum = "39BDB6AD740BC13B16215CB9F233D66796BBAE897F3BF6EB77ABB712E87C3C26" },
   { name = "pg_types", version = "0.5.0", build_tools = ["rebar3"], requirements = [], otp_app = "pg_types", source = "hex", outer_checksum = "A3023B464AA960BC1628635081E30CCA4F676F2D4C23CCD6179C1C11C9B4A642" },
@@ -60,7 +60,7 @@ gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
 glexer = { version = ">= 2.1.0 and < 3.0.0" }
 global_value = { version = ">= 1.0.0 and < 2.0.0" }
 justin = { version = ">= 1.0.1 and < 2.0.0" }
-mug = { version = ">= 3.0.0 and < 4.0.0" }
+mug = { git = "https://github.com/arnu515/mug.git", ref = "main" }
 non_empty_list = { version = ">= 2.1.0 and < 3.0.0" }
 pog = { version = ">= 4.1.0 and < 5.0.0" }
 shellout = { version = ">= 1.6.0 and < 2.0.0" }

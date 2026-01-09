@@ -41,10 +41,10 @@ pub fn connect(host, port, timeout) {
 
 fn maybe_ssl(socket) {
   let assert Ok(_) = mug.send(socket, <<8:size(32), 80_877_103:size(32)>>)
-  case mug.receive(socket, 500) {
+  case mug.receive(socket, 5000) {
     Ok(<<"S">>) -> {
       let assert Ok(upgraded) =
-        mug.upgrade(socket, mug.DangerouslyDisableVerification, 1000)
+        mug.upgrade(socket, mug.DangerouslyDisableVerification, 5000)
       upgraded
     }
     Ok(_) -> socket
