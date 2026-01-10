@@ -16,6 +16,7 @@ import gleam/bool
 import gleam/dict
 import gleam/int
 import gleam/list
+import gleam/option.{None}
 import gleam/result.{try}
 import gleam/set
 import mug
@@ -31,7 +32,7 @@ pub fn connect(host, port, timeout) {
       port: port,
       timeout: timeout,
       ip_version_preference: mug.Ipv4Preferred,
-      tls_opts: mug.NoTls,
+      tls: None,
     )
 
   use socket <- result.try(mug.connect(options))
